@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Role-Based Authentication</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  html, body {
+    margin: 0; padding: 0;
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+    background: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+    background-size: cover;
+    overflow: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right:0; bottom: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 0;
+  }
+  #app {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+  }
+  .auth-container, .dashboard {
+    background: rgba(255,255,255,0.95);
+    border-radius: 16px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    width: 360px;
+    max-width: 95vw;
+    padding: 2rem;
+    color: #222;
+    text-align: center;
+  }
+  h1 {
+    margin-top: 0;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #2a4365;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+  }
+  label {
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  input[type="text"], input[type="email"], input[type="password"], select {
+    padding: 10px 14px;
+    margin-bottom: 1.25rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  select:focus {
+    border-color: #2a4365;
+    outline: none;
+  }
+  button {
+    background-color: #2a4365;
+    color: white;
+    font-weight: 700;
+    border: none;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 0.5rem;
+  }
+  button:hover {
+    background-color: #1a2946;
+  }
+  .toggle-link {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #2a4365;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: underline;
+    user-select: none;
+  }
+  .error-message {
+    color: #e84118;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    text-align: center;
+  }
+  /* Dashboard */
+  .dashboard {
+    color: #2a4365;
+  }
+  .dashboard h2 {
+    margin-bottom: 1rem;
+  }
+  .dashboard p {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+  #logout-btn {
+    background-color: #ff6f61;
+  }
+  #logout-btn:hover {
+    background-color: #e66056;
+  }
+</style>
+</head>
+<body>
+  <div id="app">
+    <div class="auth-container" id="auth-container">
+      <h1 id="form-title">Login</h1>
+      <div class="error-message" id="error-msg" style="display:none;"></div>
+
+      <form id="login-form">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" placeholder="you@example.com" required autocomplete="username" />
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" placeholder="Your password" required autocomplete="current-password" />
+        <button type="submit">Login</button>
+      </form>
+
+      <form id="register-form" style="display:none;">
+        <label for="register-name">Full Name</label>
+        <input type="text" id="register-name" placeholder="John Doe" required autocomplete="name" />
+        <label for="register-email">Email</label>
+        <input type="email" id="register-email" placeholder="you@example.com" required autocomplete="email" />
+        <label for="register-password">Password</label>
+        <input type="password" id="register-password" placeholder="Enter password" required minlength="6" autocomplete="new-password" />
+        <label for="register-role">Role</label>
+        <select id="register-role" required>
+          <option value="" disabled selected>Select Role</option>
+          <option value="student">Student</option>
+          <option value="recruiter">Recruiter</option>
+          <option value="admin">Admin</option>
+        </select>
+        <button type="submit">Register</button>
+      </form>
+
+      <div class="toggle-link" id="toggle-auth">Don't have an account? Register here.</div>
+    </div>
+
+    <div class="dashboard" id="dashboard" style="display:none;">
+      <h2>Welcome, <span id="dashboard-name"></span>!</h2>
+      <p>You are logged in as <strong><span id="dashboard-role"></span></strong>.</p>
+      <div id="role-content"></div>
+      <button id="logout-btn">Logout</button>
+    </div>
+  </div>
+
+<script>
+  const authContainer = document.getElementById('auth-container');
+  const dashboard = document.getElementById('dashboard');
+  const formTitle = document.getElementById('form-title');
+  const toggleAuth = document.getElementById('toggle-auth');
+  const errorMsg = document.getElementById('error-msg');
+
+  const loginForm = document.getElementById('login-form');
+  const registerForm = document.getElementById('register-form');
+
+  const dashboardName = document.getElementById('dashboard-name');
+  const dashboardRole = document.getElementById('dashboard-role');
+  const roleContent = document.getElementById('role-content');
+  const logoutBtn = document.getElementById('logout-btn');
+
+  const USERS_KEY = 'authUsers';
+  const SESSION_KEY = 'authSession';
+
+  let isLogin = true;
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.style.display = 'block';
+  }
+  function clearError() {
+    errorMsg.textContent = '';
+    errorMsg.style.display = 'none';
+  }
+  function saveUsers(users) {
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  }
+  function loadUsers() {
+    const users = localStorage.getItem(USERS_KEY);
+    return users ? JSON.parse(users) : [];
+  }
+  function saveSession(user) {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+  }
+  function loadSession() {
+    const session = localStorage.getItem(SESSION_KEY);
+    return session ? JSON.parse(session) : null;
+  }
+  function clearSession() {
+    localStorage.removeItem(SESSION_KEY);
+  }
+
+  function toggleForms() {
+    clearError();
+    if (isLogin) {
+      formTitle.textContent = 'Register';
+      loginForm.style.display = 'none';
+      registerForm.style.display = 'flex';
+      toggleAuth.textContent = 'Already have an account? Login here.';
+    } else {
+      formTitle.textContent = 'Login';
+      loginForm.style.display = 'flex';
+      registerForm.style.display = 'none';
+      toggleAuth.textContent = "Don't have an account? Register here.";
+    }
+    isLogin = !isLogin;
+  }
+  toggleAuth.addEventListener('click', toggleForms);
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  registerForm.addEventListener('submit', e => {
+    e.preventDefault();
+    clearError();
+
+    const name = document.getElementById('register-name').value.trim();
+    const email = document.getElementById('register-email').value.trim().toLowerCase();
+    const password = document.getElementById('register-password').value;
+    const role = document.getElementById('register-role').value;
+
+    if (!name || !email || !password || !role) {
+      showError('Please fill out all fields.');
+      return;
+    }
+    if (!isValidEmail(email)) {
+      showError('Invalid email format.');
+      return;
+    }
+    if (password.length < 6) {
+      showError('Password should be at least 6 characters.');
+      return;
+    }
+    let users = loadUsers();
+    if (users.some(u => u.email === email)) {
+      showError('Email already registered.');
+      return;
+    }
+    users.push({ name, email, password, role });
+    saveUsers(users);
+    alert('Registration successful. You can now login.');
+    registerForm.reset();
+    toggleForms();
+  });
+
+  loginForm.addEventListener('submit', e => {
+    e.preventDefault();
+    clearError();
+
+    const email = document.getElementById('login-email').value.trim().toLowerCase();
+    const password = document.getElementById('login-password').value;
+
+    if (!email || !password) {
+      showError('Please enter email and password.');
+      return;
+    }
+    if (!isValidEmail(email)) {
+      showError('Invalid email format.');
+      return;
+    }
+    const users = loadUsers();
+    const user = users.find(u => u.email === email && u.password === password);
+    if (!user) {
+      showError('Invalid email or password.');
+      return;
+    }
+    saveSession(user);
+    showDashboard(user);
+  });
+
+  function showDashboard(user) {
+    authContainer.style.display = 'none';
+    dashboard.style.display = 'block';
+    dashboardName.textContent = user.name;
+    dashboardRole.textContent = capitalizeFirstLetter(user.role);
+    switch (user.role) {
+      case 'student':
+        roleContent.innerHTML = `<p>This is the <strong>Student Dashboard</strong> placeholder.<br>Access your profile, applications, and more here.</p>`;
+        break;
+      case 'recruiter':
+        roleContent.innerHTML = `<p>This is the <strong>Recruiter Dashboard</strong> placeholder.<br>Post jobs, view candidates, and manage listings.</p>`;
+        break;
+      case 'admin':
+        roleContent.innerHTML = `<p>This is the <strong>Admin Dashboard</strong> placeholder.<br>Manage users, content, and platform settings.</p>`;
+        break;
+      default:
+        roleContent.innerHTML = `<p>Unknown role.</p>`;
+        break;
+    }
+  }
+  function capitalizeFirstLetter(str) {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+  logoutBtn.addEventListener('click', () => {
+    clearSession();
+    dashboard.style.display = 'none';
+    authContainer.style.display = 'block';
+  });
+
+  function init() {
+    const sessionUser = loadSession();
+    if (sessionUser) {
+      showDashboard(sessionUser);
+    } else {
+      authContainer.style.display = 'block';
+      dashboard.style.display = 'none';
+      isLogin = true;
+      formTitle.textContent = 'Login';
+      loginForm.style.display = 'flex';
+      registerForm.style.display = 'none';
+      toggleAuth.textContent = "Don't have an account? Register here.";
+      clearError();
+    }
+  }
+  init();
+
+  fetch("http://localhost:8080/api/user/login", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email: "student@mail.com", password: "1234" })
+})
+.then(res => res.json())
+.then(data => {
+  if (data && data.id) {
+    alert("Login success!");
+    window.location.href = "Student Dashboard.html";
+  } else {
+    alert("Invalid credentials");
+  }
+});
+  
+</script>
+</body>
+</html>

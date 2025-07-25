@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Recruiter Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: url('recruiter.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: #333;
+  display: flex;
+  height: 100vh;
+}
+  nav {
+    width: 260px;
+    background-color: #273c75;
+    color: white;
+    padding-top: 2rem;
+    display: flex;
+    flex-direction: column;
+  }
+  nav h1 {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    font-size: 1.6rem;
+    letter-spacing: 1.5px;
+  }
+  nav button {
+    background: none;
+    border: none;
+    color: #dcdde1;
+    font-size: 1.1rem;
+    padding: 16px 30px;
+    text-align: left;
+    cursor: pointer;
+    border-left: 5px solid transparent;
+    transition: all 0.3s ease;
+  }
+  nav button:hover,
+  nav button.active {
+    background-color: #192a56;
+    color: #fbc531;
+    border-left-color: #fbc531;
+  }
+  main {
+    flex-grow: 1;
+    padding: 2rem 3rem;
+    overflow-y: auto;
+  }
+  h2 {
+    margin-top: 0;
+    font-weight: 700;
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 1.5rem;
+  }
+  form.job-form {
+    max-width: 600px;
+  }
+  form.job-form label {
+    background-color: grey;
+    max-width: 150px;
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+  }
+  form.job-form input[type="text"],
+  form.job-form select,
+  form.job-form textarea {
+    width: 100%;
+    padding: 11px 14px;
+    margin-bottom: 1.25rem;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    resize: vertical;
+  }
+  form.job-form input[type="text"]:focus,
+  form.job-form select:focus,
+  form.job-form textarea:focus {
+    border-color: #fbc531;
+    outline: none;
+  }
+  form.job-form textarea {
+    min-height: 100px;
+  }
+  form.job-form button {
+    background-color: #fbc531;
+    color: #1e272e;
+    font-weight: 700;
+    border: none;
+    padding: 13px 30px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  form.job-form button:hover {
+    background-color: #e1b100;
+  }
+
+  /* Listings */
+  .listings {
+    max-width: 900px;
+    margin-top: 1rem;
+  }
+  .listing-item {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    padding: 1rem 1.8rem;
+    margin-bottom: 1.25rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .listing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .listing-title {
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin: 0;
+    color: #2f3640;
+  }
+  .listing-company-location {
+    color: #718093;
+    font-size: 0.95rem;
+    margin: 5px 0 0 0;
+  }
+  .listing-type {
+    font-weight: 600;
+    font-size: 0.9rem;
+    background: #fbc531;
+    color: #2f3640;
+    border-radius: 20px;
+    padding: 4px 18px;
+    white-space: nowrap;
+  }
+  .listing-description {
+    margin: 1rem 0 0 0;
+    line-height: 1.4;
+    color: #353b48;
+    font-size: 1rem;
+  }
+
+  /* Applications Table */
+  table.applications-table {
+    width: 100%;
+    max-width: 960px;
+    border-collapse: collapse;
+  }
+  table.applications-table th,
+  table.applications-table td {
+    border: 1px solid #ddd;
+    padding: 12px 16px;
+    text-align: left;
+    vertical-align: middle;
+  }
+  table.applications-table th {
+    background-color: #f4f6f8;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  .status-pending {
+    color: #e1b12c;
+    font-weight: 700;
+  }
+  .status-shortlisted {
+    color: #44bd32;
+    font-weight: 700;
+  }
+  .status-rejected {
+    color: #e84118;
+    font-weight: 700;
+  }
+  .action-btn {
+    padding: 6px 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    margin-right: 8px;
+    transition: background-color 0.3s ease;
+  }
+  .shortlist-btn {
+    background-color: #44bd32;
+    color: white;
+  }
+  .shortlist-btn:hover {
+    background-color: #3a9e28;
+  }
+  .reject-btn {
+    background-color: #e84118;
+    color: white;
+  }
+  .reject-btn:hover {
+    background-color: #c33011;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    nav {
+      width: 60px;
+      padding-top: 1rem;
+    }
+    nav h1 {
+      display: none;
+    }
+    nav button {
+      padding: 15px 10px;
+      font-size: 0;
+      position: relative;
+    }
+    nav button::after {
+      content: attr(title);
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      transform: translate(8px,-50%);
+      white-space: nowrap;
+      background-color: #192a56;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      opacity: 0;
+      pointer-events: none;
+      color: white;
+      transition: opacity 0.2s ease;
+    }
+    nav button:hover::after,
+    nav button.active::after {
+      opacity: 1;
+    }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <h1>Recruiter Dash</h1>
+  <button class="nav-btn active" data-section="post-job" title="Post Job/Internship">➕Post a Job / Internship</button>
+  <button class="nav-btn" data-section="view-jobs" title="View Listings">📋Your Job Listings</button>
+  <button class="nav-btn" data-section="applications" title="Applications">🗂Applications Received</button>
+</nav>
+<main>
+  <!-- Post Job/Internship -->
+  <section id="post-job-section" class="content-section">
+    <h2>Post a Job / Internship</h2>
+    <form id="job-post-form" class="job-form">
+      <label for="job-title">Job Title</label>
+      <input type="text" id="job-title" name="jobTitle" placeholder="e.g. Frontend Developer Intern" required />
+
+      <label for="company-name">Company Name</label>
+      <input type="text" id="company-name" name="companyName" placeholder="Your company name" required />
+
+      <label for="location">Location</label>
+      <input type="text" id="location" name="location" placeholder="e.g. Remote, New York, CA" required />
+
+      <label for="job-type">Job Type</label>
+      <select id="job-type" name="jobType" required>
+        <option value="" disabled selected>Select job type</option>
+        <option value="Full-time">Full-time</option>
+        <option value="Part-time">Part-time</option>
+        <option value="Internship">Internship</option>
+        <option value="Contract">Contract</option>
+      </select>
+
+      <label for="job-description">Job Description</label>
+      <textarea id="job-description" name="jobDescription" placeholder="Describe the role, responsibilities, and requirements..." required></textarea>
+
+      <button type="submit">Post Job</button>
+    </form>
+  </section>
+
+  <!-- View Job Listings -->
+  <section id="view-jobs-section" class="content-section" style="display:none;">
+    <h2>Your Job Listings</h2>
+    <div id="job-listings" class="listings">
+      <!-- Job listings dynamically inserted here -->
+    </div>
+    <p id="no-jobs-msg" style="color:#666; font-style: italic; margin-top:1rem; display:none;">No job listings posted yet.</p>
+  </section>
+
+  <!-- Applications -->
+  <section id="applications-section" class="content-section" style="display:none;">
+    <h2>Applications Received</h2>
+    <table class="applications-table" id="applications-table">
+      <thead>
+        <tr>
+          <th>Job Title</th>
+          <th>Applicant Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Resume</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Application entries here -->
+      </tbody>
+    </table>
+    <p id="no-applications-msg" style="color:#666; font-style: italic; margin-top:1rem; display:none;">No applications received yet.</p>
+  </section>
+</main>
+
+<script>
+  // Navigation elements
+  const navButtons = document.querySelectorAll('nav button.nav-btn');
+  const sections = {
+    'post-job': document.getElementById('post-job-section'),
+    'view-jobs': document.getElementById('view-jobs-section'),
+    'applications': document.getElementById('applications-section'),
+  };
+
+  // Form & container references
+  const jobPostForm = document.getElementById('job-post-form');
+  const jobListingsContainer = document.getElementById('job-listings');
+  const noJobsMsg = document.getElementById('no-jobs-msg');
+  const applicationsTableBody = document.querySelector('#applications-table tbody');
+  const noApplicationsMsg = document.getElementById('no-applications-msg');
+
+  // Storage keys
+  const JOBS_STORAGE_KEY = 'postedJobs';
+  const APPLICATIONS_STORAGE_KEY = 'jobApplications';
+
+  // Utility functions for storage
+  function saveToStorage(key, data) {
+    localStorage.setItem(key, JSON.stringify(data));
+  }
+  function loadFromStorage(key) {
+    const val = localStorage.getItem(key);
+    return val ? JSON.parse(val) : [];
+  }
+
+  // Show section corresponding to clicked nav button
+  function activateSection(sectionName) {
+    for (const key in sections) {
+      sections[key].style.display = (key === sectionName) ? 'block' : 'none';
+    }
+    navButtons.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.section === sectionName);
+    });
+  }
+
+  // Generate unique ID
+  function generateId() {
+    return 'id-' + Math.random().toString(36).substr(2, 9);
+  }
+
+  // Post job handler
+  jobPostForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const jobTitle = jobPostForm.jobTitle.value.trim();
+    const companyName = jobPostForm.companyName.value.trim();
+    const location = jobPostForm.location.value.trim();
+    const jobType = jobPostForm.jobType.value;
+    const jobDescription = jobPostForm.jobDescription.value.trim();
+
+    if (!jobTitle || !companyName || !location || !jobType || !jobDescription) {
+      alert('Please fill out all fields.');
+      return;
+    }
+
+    // Load existing jobs
+    const jobs = loadFromStorage(JOBS_STORAGE_KEY);
+
+    // Add new job
+    const newJob = {
+      id: generateId(),
+      title: jobTitle,
+      company: companyName,
+      location,
+      type: jobType,
+      description: jobDescription,
+      postedDate: new Date().toISOString(),
+    };
+    jobs.push(newJob);
+    saveToStorage(JOBS_STORAGE_KEY, jobs);
+
+    alert('Job posted successfully!');
+    jobPostForm.reset();
+  });
+
+  // Render posted jobs in view jobs section
+  function renderJobs() {
+    const jobs = loadFromStorage(JOBS_STORAGE_KEY);
+    jobListingsContainer.innerHTML = '';
+
+    if (jobs.length === 0) {
+      noJobsMsg.style.display = 'block';
+      return;
+    } else {
+      noJobsMsg.style.display = 'none';
+    }
+
+    jobs.forEach(job => {
+      const el = document.createElement('div');
+      el.className = 'listing-item';
+      el.innerHTML = `
+        <div class="listing-header">
+          <h3 class="listing-title">${job.title}</h3>
+          <div class="listing-type">${job.type}</div>
+        </div>
+        <div class="listing-company-location">${job.company} &mdash; ${job.location}</div>
+        <p class="listing-description">${job.description}</p>
+      `;
+      jobListingsContainer.appendChild(el);
+    });
+  }
+
+  // Load applications from storage
+  function loadApplications() {
+    return loadFromStorage(APPLICATIONS_STORAGE_KEY);
+  }
+
+  // Save applications to storage
+  function saveApplications(applications) {
+    saveToStorage(APPLICATIONS_STORAGE_KEY, applications);
+  }
+
+  // Render applications table with data & action buttons
+  function renderApplications() {
+    const jobs = loadFromStorage(JOBS_STORAGE_KEY);
+    const applications = loadApplications();
+    applicationsTableBody.innerHTML = '';
+
+    if (applications.length === 0) {
+      noApplicationsMsg.style.display = 'block';
+      return;
+    } else {
+      noApplicationsMsg.style.display = 'none';
+    }
+
+    applications.forEach(app => {
+      const job = jobs.find(j => j.id === app.jobId);
+      if (!job) return; // job deleted or not found
+
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `
+        <td>${job.title}</td>
+        <td>${app.applicant?.name || '-'}</td>
+        <td>${app.applicant?.email || '-'}</td>
+        <td>${app.applicant?.phone || '-'}</td>
+        <td>${app.resumeFileName || '-'}</td>
+        <td class="status-${app.status.toLowerCase()}">${app.status}</td>
+        <td></td>
+      `;
+
+      // Actions
+      const tdActions = tr.querySelector('td:last-child');
+
+      if (app.status === 'Pending') {
+        const shortlistBtn = document.createElement('button');
+        shortlistBtn.textContent = 'Shortlist';
+        shortlistBtn.className = 'action-btn shortlist-btn';
+        shortlistBtn.addEventListener('click', () => updateApplicationStatus(app.id, 'Shortlisted'));
+
+        const rejectBtn = document.createElement('button');
+        rejectBtn.textContent = 'Reject';
+        rejectBtn.className = 'action-btn reject-btn';
+        rejectBtn.addEventListener('click', () => updateApplicationStatus(app.id, 'Rejected'));
+
+        tdActions.appendChild(shortlistBtn);
+        tdActions.appendChild(rejectBtn);
+      } else {
+        tdActions.textContent = '-';
+      }
+
+      applicationsTableBody.appendChild(tr);
+    });
+  }
+
+  // Update application status in storage & re-render UI
+  function updateApplicationStatus(appId, newStatus) {
+    if (!['Shortlisted', 'Rejected'].includes(newStatus)) return;
+    const applications = loadApplications();
+    const appIndex = applications.findIndex(app => app.id === appId);
+    if (appIndex === -1) return;
+
+    applications[appIndex].status = newStatus;
+    saveApplications(applications);
+    renderApplications();
+  }
+
+  // Navigation clicks
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      activateSection(btn.dataset.section);
+      if (btn.dataset.section === 'view-jobs') {
+        renderJobs();
+      }
+      if (btn.dataset.section === 'applications') {
+        renderApplications();
+      }
+    });
+  });
+
+  // Initialize default view
+  function init() {
+    activateSection('post-job');
+  }
+  init();
+</script>
+</body>
+</html>
+

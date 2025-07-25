@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Student Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+  * {
+    box-sizing: border-box;
+  }
+  body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: url('student.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: #333;
+  display: flex;
+  height: 100vh;
+}
+
+
+  /* Sidebar */
+  nav {
+    width: 250px;
+    background: #2a2d45;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding-top: 2rem;
+  }
+  nav h1 {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    letter-spacing: 1px;
+  }
+  nav button {
+    background: none;
+    border: none;
+    color: #bbb;
+    padding: 15px 25px;
+    font-size: 1.1rem;
+    text-align: left;
+    cursor: pointer;
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
+  }
+  nav button:hover,
+  nav button.active {
+    color: #fff;
+    background: #444872;
+    border-left: 4px solid #ff6f61;
+  }
+
+  /* Main content */
+  main {
+  /*background-color: rgba(255, 255, 255, 0.85);*/
+  border-radius: 12px;
+  padding: 2rem 3rem;
+  overflow-y: auto;
+  flex-grow: 1;
+  margin: 1rem;
+}
+
+  h2 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    font-size: 2rem;
+    color: white;
+  }
+
+  /* Profile form */
+ form.profile-form {
+    max-width: 500px;
+  }
+  form.profile-form label {
+    max-width: 150px;
+    background-color: grey;
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+  form.profile-form input[type="text"],
+  form.profile-form input[type="email"],
+  form.profile-form input[type="tel"] {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 1.25rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+  form.profile-form input[type="text"]:focus,
+  form.profile-form input[type="email"]:focus,
+  form.profile-form input[type="tel"]:focus {
+    border-color: #ff6f61;
+    outline: none;
+  }
+  form.profile-form button {
+    background-color: #ff6f61;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  form.profile-form button:hover {
+    background-color: #e66056;
+  }
+
+  /* Resume upload */
+  .resume-section {
+    max-width: 500px;
+  }
+  .resume-section input[type="file"] {
+    font-size: 1rem;
+  }
+  .resume-info {
+    margin-top: 1rem;
+    font-style: italic;
+    color: white;
+  }
+
+  /* Jobs list */
+  .job-list {
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .job-item {
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgb(0 0 0 / 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .job-info {
+    flex-grow: 1;
+  }
+  .job-title {
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin: 0 0 0.25rem 0;
+  }
+  .job-company {
+    margin: 0 0 0.5rem 0;
+    color: #666;
+  }
+  .job-details {
+    font-size: 0.9rem;
+    color: #777;
+    margin: 0;
+  }
+  .apply-btn {
+    background-color: #ff6f61;
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+  }
+  .apply-btn:hover:enabled {
+    background-color: #e66056;
+  }
+  .apply-btn:disabled {
+    background-color: #bbb;
+    cursor: default;
+  }
+
+  /* Application status */
+  .app-status-list {
+    background-color: white;
+    max-width: 700px;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  .app-status-list th, .app-status-list td {
+    border: 1px solid #ddd;
+    padding: 12px 15px;
+    text-align: left;
+  }
+  .app-status-list th {
+    background-color: #f7f7f7;
+    font-weight: 700;
+  }
+  .status-pending {
+    color: #ff9800;
+    font-weight: 700;
+  }
+  .status-accepted {
+    color: #4caf50;
+    font-weight: 700;
+  }
+  .status-rejected {
+    color: #f44336;
+    font-weight: 700;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    nav {
+      width: 60px;
+      padding-top: 1rem;
+    }
+    nav h1 {
+      display: none;
+    }
+    nav button {
+      padding: 15px 10px;
+      font-size: 0;
+      position: relative;
+    }
+    nav button::after {
+      content: attr(title);
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      transform: translate(8px, -50%);
+      white-space: nowrap;
+      background-color: #444872;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      color: white;
+    }
+    nav button:hover::after,
+    nav button.active::after {
+      opacity: 1;
+    }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <h1>Student Dash</h1>
+  <button class="nav-btn active" data-section="profile" title="Profile">👤 Profile Management</button>
+  <button class="nav-btn" data-section="resume" title="Resume">📄 Resume Upload</button>
+  <button class="nav-btn" data-section="jobs" title="Jobs">💼 Available Jobs & Internships</button>
+  <button class="nav-btn" data-section="applications" title="Applications">📊 Application Status</button>
+</nav>
+<main>
+  <!-- Profile Management -->
+  <section id="profile-section" class="content-section">
+    <h2>Profile Management</h2>
+    <form id="profile-form" class="profile-form">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" placeholder="Your full name" required />
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="your.email@example.com" required />
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" name="phone" placeholder="+1 234 567 8900" />
+      <button type="submit">Save Profile</button>
+    </form>
+  </section>
+
+  <!-- Resume Upload -->
+  <section id="resume-section" class="content-section" style="display:none;">
+    <h2>Resume Upload</h2>
+    <div class="resume-section">
+      <input type="file" id="resume-upload" accept=".pdf,.doc,.docx" />
+      <p class="resume-info" id="resume-info">No resume uploaded yet.</p>
+    </div>
+  </section>
+
+  <!-- Jobs/Inernships View and Apply -->
+  <section id="jobs-section" class="content-section" style="display:none;">
+    <h2>Available Jobs & Internships</h2>
+    <div class="job-list" id="job-list">
+      <!-- jobs will be dynamically inserted here -->
+    </div>
+  </section>
+
+  <!-- Application Status Tracking -->
+  <section id="applications-section" class="content-section" style="display:none;">
+    <h2>Application Status</h2>
+    <table class="app-status-list" id="application-status-list">
+      <thead>
+        <tr>
+          <th>Job Title</th>
+          <th>Company</th>
+          <th>Date Applied</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- applications will be dynamically inserted here -->
+      </tbody>
+    </table>
+    <p id="no-applications" style="font-style: italic; color: #777; margin-top: 1rem;">You have not applied to any jobs yet.</p>
+  </section>
+</main>
+
+<script>
+  // Elements references
+  const navButtons = document.querySelectorAll('nav button.nav-btn');
+  const sections = {
+    profile: document.getElementById('profile-section'),
+    resume: document.getElementById('resume-section'),
+    jobs: document.getElementById('jobs-section'),
+    applications: document.getElementById('applications-section'),
+  };
+
+  // Profile form elements
+  const profileForm = document.getElementById('profile-form');
+  const inputName = document.getElementById('name');
+  const inputEmail = document.getElementById('email');
+  const inputPhone = document.getElementById('phone');
+
+  // Resume elements
+  const resumeUpload = document.getElementById('resume-upload');
+  const resumeInfo = document.getElementById('resume-info');
+
+  // Jobs list container
+  const jobListEl = document.getElementById('job-list');
+
+  // Applications table and empty message
+  const appStatusListBody = document.querySelector('#application-status-list tbody');
+  const noApplicationsMsg = document.getElementById('no-applications');
+
+  // Initial sample jobs data
+  const sampleJobs = [
+    {
+      id: 'job1',
+      title: 'Frontend Developer Intern',
+      company: 'Tech Solutions Ltd.',
+      location: 'Remote',
+      type: 'Internship',
+      description: 'Work on modern web applications using React and CSS.',
+    },
+    {
+      id: 'job2',
+      title: 'Junior Software Engineer',
+      company: 'Innovatech Corp.',
+      location: 'New York, NY',
+      type: 'Full-time',
+      description: 'Develop scalable backend APIs using Node.js and Express.',
+    },
+    {
+      id: 'job3',
+      title: 'Marketing Intern',
+      company: 'Creative Minds Agency',
+      location: 'Los Angeles, CA',
+      type: 'Internship',
+      description: 'Assist marketing team with campaign planning and social media.',
+    },
+    {
+      id: 'job4',
+      title: 'Data Analyst',
+      company: 'Data Insights LLC',
+      location: 'Remote',
+      type: 'Full-time',
+      description: 'Analyze datasets and produce reports to guide business strategy.',
+    },
+  ];
+
+  // Application statuses
+  const statuses = ['Pending', 'Accepted', 'Rejected'];
+
+  // Utility: Save data to localStorage
+  function saveToStorage(key, data) {
+    localStorage.setItem(key, JSON.stringify(data));
+  }
+  // Utility: Load data from localStorage
+  function loadFromStorage(key) {
+    const val = localStorage.getItem(key);
+    return val ? JSON.parse(val) : null;
+  }
+
+  // Show active section based on button clicked
+  function activateSection(newSection) {
+    for (const sectionKey in sections) {
+      sections[sectionKey].style.display = sectionKey === newSection ? 'block' : 'none';
+    }
+    navButtons.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.section === newSection);
+    });
+  }
+
+  // Load profile from storage to form
+  function loadProfile() {
+    const profile = loadFromStorage('studentProfile');
+    if (profile) {
+      inputName.value = profile.name || '';
+      inputEmail.value = profile.email || '';
+      inputPhone.value = profile.phone || '';
+    }
+  }
+
+  // Save profile to localStorage
+  profileForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const profile = {
+      name: inputName.value.trim(),
+      email: inputEmail.value.trim(),
+      phone: inputPhone.value.trim(),
+    };
+    saveToStorage('studentProfile', profile);
+    alert('Profile saved successfully!');
+  });
+
+  // Resume upload handling
+  resumeUpload.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file) {
+      saveToStorage('studentResume', { name: file.name, type: file.type, lastModified: file.lastModified });
+      resumeInfo.textContent = `Uploaded Resume: ${file.name}`;
+    } else {
+      resumeInfo.textContent = 'No resume uploaded yet.';
+      localStorage.removeItem('studentResume');
+    }
+  });
+
+  // Load resume info from storage
+  function loadResume() {
+    const resume = loadFromStorage('studentResume');
+    if (resume) {
+      resumeInfo.textContent = `Uploaded Resume: ${resume.name}`;
+    } else {
+      resumeInfo.textContent = 'No resume uploaded yet.';
+    }
+  }
+
+  // Render jobs list with apply buttons
+  function renderJobs() {
+    // Load applied jobs from storage
+    const appliedApps = loadFromStorage('appliedJobs') || {};
+    jobListEl.innerHTML = '';
+    sampleJobs.forEach(job => {
+      const isApplied = appliedApps.hasOwnProperty(job.id);
+
+      const jobItem = document.createElement('div');
+      jobItem.className = 'job-item';
+
+      const jobInfo = document.createElement('div');
+      jobInfo.className = 'job-info';
+      jobInfo.innerHTML = `
+        <h3 class="job-title">${job.title}</h3>
+        <p class="job-company">${job.company} &mdash; ${job.location} &nbsp;&bull;&nbsp; ${job.type}</p>
+        <p class="job-details">${job.description}</p>
+      `;
+
+      const applyBtn = document.createElement('button');
+      applyBtn.className = 'apply-btn';
+      applyBtn.textContent = isApplied ? 'Applied' : 'Apply';
+      applyBtn.disabled = isApplied;
+      applyBtn.addEventListener('click', () => {
+        applyToJob(job.id);
+        renderJobs();
+        renderApplications();
+      });
+
+      jobItem.appendChild(jobInfo);
+      jobItem.appendChild(applyBtn);
+      jobListEl.appendChild(jobItem);
+    });
+  }
+
+  // Apply to a job, save application with date and random status
+  function applyToJob(jobId) {
+    const appliedJobs = loadFromStorage('appliedJobs') || {};
+    if (!appliedJobs[jobId]) {
+      const today = new Date();
+      const statusIndex = 0; // default to Pending initially
+      appliedJobs[jobId] = {
+        appliedDate: today.toISOString().split('T')[0],
+        status: statuses[statusIndex]
+      };
+      saveToStorage('appliedJobs', appliedJobs);
+      alert('Application submitted successfully!');
+    }
+  }
+
+  // Render application status table
+  function renderApplications() {
+    const appliedJobs = loadFromStorage('appliedJobs') || {};
+    const appliedIds = Object.keys(appliedJobs);
+    appStatusListBody.innerHTML = '';
+
+    if (appliedIds.length === 0) {
+      noApplicationsMsg.style.display = 'block';
+      return;
+    } else {
+      noApplicationsMsg.style.display = 'none';
+    }
+
+    appliedIds.forEach(jobId => {
+      const job = sampleJobs.find(j => j.id === jobId);
+      if (!job) return;
+
+      const app = appliedJobs[jobId];
+
+      // Row
+      const tr = document.createElement('tr');
+
+      // Title
+      const tdTitle = document.createElement('td');
+      tdTitle.textContent = job.title;
+      tr.appendChild(tdTitle);
+
+      // Company
+      const tdCompany = document.createElement('td');
+      tdCompany.textContent = job.company;
+      tr.appendChild(tdCompany);
+
+      // Applied Date
+      const tdDate = document.createElement('td');
+      tdDate.textContent = app.appliedDate;
+      tr.appendChild(tdDate);
+
+      // Status
+      const tdStatus = document.createElement('td');
+      tdStatus.textContent = app.status;
+      tdStatus.className = {
+        Pending: 'status-pending',
+        Accepted: 'status-accepted',
+        Rejected: 'status-rejected'
+      }[app.status] || '';
+      tr.appendChild(tdStatus);
+
+      appStatusListBody.appendChild(tr);
+    });
+  }
+
+  // Navigation click handler
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      activateSection(btn.dataset.section);
+      if (btn.dataset.section === 'jobs') {
+        renderJobs();
+      } else if (btn.dataset.section === 'applications') {
+        renderApplications();
+      }
+    });
+  });
+
+  // Initialize default section and load stored data
+  function init() {
+    activateSection('profile');
+    loadProfile();
+    loadResume();
+  }
+
+  init();
+</script>
+</body>
+</html>
+

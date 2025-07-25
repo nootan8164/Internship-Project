@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin Panel</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  height: 100vh;
+  background: url('admin.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: white;
+}
+  nav {
+    width: 260px;
+    background: #273c75;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding-top: 2rem;
+  }
+  nav h1 {
+    margin: 0 0 2rem 0;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.7rem;
+    letter-spacing: 1.5px;
+  }
+  nav button {
+    background: none;
+    border: none;
+    color: #dcdde1;
+    padding: 16px 30px;
+    font-size: 1.1rem;
+    text-align: left;
+    cursor: pointer;
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
+  }
+  nav button.active,
+  nav button:hover {
+    background-color: #192a56;
+    color: #fbc531;
+    border-left-color: #fbc531;
+  }
+ main {
+  flex-grow: 1;
+  padding: 2rem 2.5rem;
+  overflow-y: auto;
+  /*background-color: rgba(255, 255, 255, 0.85); /* optional */
+  border-radius: 12px;
+  margin: 1rem;
+}
+
+  h2 {
+    margin-top: 0;
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: white;
+  }
+  /* Section styling */
+  section {
+    max-width: 1000px;
+  }
+
+  /* User Management Table */
+  table.user-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  table.user-table th,
+  table.user-table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+    vertical-align: middle;
+  }
+  table.user-table th {
+    background-color: grey;
+    font-weight: 700;
+  }
+  .status-approved {
+    color: #44bd32;
+    font-weight: 700;
+  }
+  .status-blocked {
+    color: #e84118;
+    font-weight: 700;
+  }
+  /* Buttons */
+  .btn {
+    padding: 6px 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    margin-right: 8px;
+    transition: background-color 0.3s ease;
+  }
+  .approve-btn {
+    background-color: #44bd32;
+    color: white;
+  }
+  .approve-btn:hover { background-color: #3a9e28; }
+  .block-btn {
+    background-color: #e84118;
+    color: white;
+  }
+  .block-btn:hover { background-color: #c33011; }
+  /* Content Moderation */
+  .content-list {
+    list-style: none;
+    padding: 0;
+    max-width: 900px;
+  }
+  .content-item {
+    background: white;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.1);
+  }
+  .content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .content-title {
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin: 0;
+    color: #273c75;
+  }
+  .content-status {
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+  }
+  .status-pending { background: #fbc531; color: #2f3640; }
+  .status-approved { background: #44bd32; color: white; }
+  .status-rejected { background: #e84118; color: white; }
+  .content-body {
+    margin-top: 0.7rem;
+    color: #333;
+    font-size: 1rem;
+  }
+  .content-actions {
+    margin-top: 1rem;
+  }
+  .content-actions button {
+    margin-right: 8px;
+  }
+
+  /* Analytics */
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap: 2rem;
+    max-width: 900px;
+  }
+  .analytics-card {
+    background: white;
+    padding: 1.25rem 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgb(0 0 0 / 0.1);
+    text-align: center;
+  }
+  .analytics-card h3 {
+    margin: 0 0 0.8rem 0;
+    font-weight: 700;
+    color: #273c75;
+    font-size: 1.2rem;
+  }
+  .analytics-value {
+    font-size: 2.5rem;
+    color: #192a56;
+    font-weight: 700;
+  }
+  /* Simple bar chart */
+  .bar-chart {
+    margin-top: 1rem;
+  }
+  .bar {
+    height: 22px;
+    background-color: #1d4e89;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    transition: width 0.6s ease;
+    color: white;
+    font-weight: 600;
+    padding-left: 8px;
+    line-height: 22px;
+  }
+  .bar-label {
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: white;
+  }
+  /* Responsive */
+  @media (max-width: 768px) {
+    nav {
+      width: 60px;
+      padding-top: 1rem;
+    }
+    nav h1 {
+      display: none;
+    }
+    nav button {
+      padding: 15px 10px;
+      font-size: 0;
+      position: relative;
+    }
+    nav button::after {
+      content: attr(title);
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      transform: translate(8px, -50%);
+      white-space: nowrap;
+      background-color: #192a56;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      opacity: 0;
+      pointer-events: none;
+      color: white;
+      transition: opacity 0.2s ease;
+    }
+    nav button:hover::after,
+    nav button.active::after {
+      opacity: 1;
+    }
+    .analytics-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <h1>Admin Panel</h1>
+  <button class="nav-btn active" data-section="users" title="User Management">👥User Management</button>
+  <button class="nav-btn" data-section="content" title="Content Moderation">📝Content Moderation</button>
+  <button class="nav-btn" data-section="analytics" title="Analytics & Reporting">📊Analytics & Reporting</button>
+</nav>
+<main>
+  <!-- User Management -->
+  <section id="users-section" class="content-section">
+    <h2>User Management</h2>
+    <table class="user-table" aria-label="User management table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="users-tbody">
+        <!-- users dynamically inserted -->
+      </tbody>
+    </table>
+    <p id="no-users-msg" style="color:#666; font-style:italic; margin-top:1rem; display:none;">No users found.</p>
+  </section>
+
+  <!-- Content Moderation -->
+  <section id="content-section" class="content-section" style="display:none;">
+    <h2>Content Moderation</h2>
+    <ul class="content-list" id="content-list">
+      <!-- content items dynamically inserted -->
+    </ul>
+    <p id="no-content-msg" style="color:#666; font-style:italic; margin-top:1rem; display:none;">No content for moderation.</p>
+  </section>
+
+  <!-- Analytics & Reporting -->
+  <section id="analytics-section" class="content-section" style="display:none;">
+    <h2>System Analytics & Reporting</h2>
+    <div class="analytics-grid" aria-label="System analytics reports">
+      <div class="analytics-card" id="total-users-card">
+        <h3>Total Users</h3>
+        <div class="analytics-value" id="total-users-val">0</div>
+      </div>
+      <div class="analytics-card" id="active-users-card">
+        <h3>Approved Users</h3>
+        <div class="analytics-value" id="approved-users-val">0</div>
+      </div>
+      <div class="analytics-card" id="blocked-users-card">
+        <h3>Blocked Users</h3>
+        <div class="analytics-value" id="blocked-users-val">0</div>
+      </div>
+      <div class="analytics-card" id="pending-content-card">
+        <h3>Pending Content</h3>
+        <div class="analytics-value" id="pending-content-val">0</div>
+      </div>
+    </div>
+    <div class="bar-chart" aria-label="User roles distribution chart" style="margin-top:2rem;">
+      <h3>User Roles Distribution</h3>
+      <div>
+        <div class="bar-label">Students</div>
+        <div class="bar" id="bar-students" style="width: 0%;">0%</div>
+      </div>
+      <div>
+        <div class="bar-label">Recruiters</div>
+        <div class="bar" id="bar-recruiters" style="width: 0%;">0%</div>
+      </div>
+      <div>
+        <div class="bar-label">Admins</div>
+        <div class="bar" id="bar-admins" style="width: 0%;">0%</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  // Elements
+  const navButtons = document.querySelectorAll('nav button.nav-btn');
+  const sections = {
+    users: document.getElementById('users-section'),
+    content: document.getElementById('content-section'),
+    analytics: document.getElementById('analytics-section'),
+  };
+
+  // User management elements
+  const usersTbody = document.getElementById('users-tbody');
+  const noUsersMsg = document.getElementById('no-users-msg');
+
+  // Content moderation elements
+  const contentList = document.getElementById('content-list');
+  const noContentMsg = document.getElementById('no-content-msg');
+
+  // Analytics elements
+  const totalUsersVal = document.getElementById('total-users-val');
+  const approvedUsersVal = document.getElementById('approved-users-val');
+  const blockedUsersVal = document.getElementById('blocked-users-val');
+  const pendingContentVal = document.getElementById('pending-content-val');
+  const barStudents = document.getElementById('bar-students');
+  const barRecruiters = document.getElementById('bar-recruiters');
+  const barAdmins = document.getElementById('bar-admins');
+
+  // LocalStorage keys
+  const USERS_KEY = 'adminPanelUsers';
+  const CONTENT_KEY = 'adminPanelContent';
+
+  // Dummy initial data (for first load)
+  const dummyUsers = [
+    { id: 'u1', name: 'Alice Johnson', email: 'alice@student.com', role: 'student', status: 'approved' },
+    { id: 'u2', name: 'Bob Smith', email: 'bob@recruiter.com', role: 'recruiter', status: 'blocked' },
+    { id: 'u3', name: 'Catherine Admin', email: 'catherine@admin.com', role: 'admin', status: 'approved' },
+    { id: 'u4', name: 'Daniel Student', email: 'daniel@student.com', role: 'student', status: 'approved' },
+    { id: 'u5', name: 'Evelyn Recruiter', email: 'evelyn@recruiter.com', role: 'recruiter', status: 'approved' },
+  ];
+  const dummyContent = [
+    { id: 'c1', title: 'Blog Post: Latest Job Trends', body: 'We discuss what is trending in the job market...', status: 'pending' },
+    { id: 'c2', title: 'Internship Opportunity at ABC Corp', body: 'Looking for software development interns...', status: 'approved' },
+    { id: 'c3', title: 'Event Announcement: Career Fair', body: 'Join us for a virtual career fair on Friday...', status: 'pending' },
+  ];
+
+  // Save/load utilities
+  function saveToStorage(key, data) {
+    localStorage.setItem(key, JSON.stringify(data));
+  }
+  function loadFromStorage(key) {
+    const val = localStorage.getItem(key);
+    return val ? JSON.parse(val) : null;
+  }
+
+  // Initialize data if none present
+  function initData() {
+    let users = loadFromStorage(USERS_KEY);
+    if (!users) {
+      users = dummyUsers;
+      saveToStorage(USERS_KEY, users);
+    }
+    let content = loadFromStorage(CONTENT_KEY);
+    if (!content) {
+      content = dummyContent;
+      saveToStorage(CONTENT_KEY, content);
+    }
+  }
+
+  // Navigation handler
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      activateSection(btn.dataset.section);
+    });
+  });
+
+  function activateSection(sectionName) {
+    for (const key in sections) {
+      sections[key].style.display = (key === sectionName) ? 'block' : 'none';
+    }
+    navButtons.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.section === sectionName);
+    });
+    if (sectionName === 'users') {
+      renderUsers();
+    } else if (sectionName === 'content') {
+      renderContent();
+    } else if (sectionName === 'analytics') {
+      renderAnalytics();
+    }
+  }
+
+  // Render users for user management
+  function renderUsers() {
+    const users = loadFromStorage(USERS_KEY) || [];
+    usersTbody.innerHTML = '';
+
+    if (users.length === 0) {
+      noUsersMsg.style.display = 'block';
+      return;
+    } else {
+      noUsersMsg.style.display = 'none';
+    }
+
+    users.forEach(user => {
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `
+        <td>${user.name}</td>
+        <td>${user.email}</td>
+        <td>${capitalizeFirstLetter(user.role)}</td>
+        <td class="status-${user.status}">${capitalizeFirstLetter(user.status)}</td>
+        <td></td>
+      `;
+      const actionTd = tr.querySelector('td:last-child');
+
+      if (user.status === 'approved') {
+        const blockBtn = document.createElement('button');
+        blockBtn.textContent = 'Block';
+        blockBtn.className = 'btn block-btn';
+        blockBtn.addEventListener('click', () => changeUserStatus(user.id, 'blocked'));
+        actionTd.appendChild(blockBtn);
+      } else if (user.status === 'blocked') {
+        const approveBtn = document.createElement('button');
+        approveBtn.textContent = 'Approve';
+        approveBtn.className = 'btn approve-btn';
+        approveBtn.addEventListener('click', () => changeUserStatus(user.id, 'approved'));
+        actionTd.appendChild(approveBtn);
+      }
+      usersTbody.appendChild(tr);
+    });
+  }
+
+  // Change user status approve/block
+  function changeUserStatus(userId, newStatus) {
+    let users = loadFromStorage(USERS_KEY);
+    const index = users.findIndex(u => u.id === userId);
+    if (index !== -1) {
+      users[index].status = newStatus;
+      saveToStorage(USERS_KEY, users);
+      renderUsers();
+      renderAnalytics(); // update analytics counts
+    }
+  }
+
+  // Render content for moderation
+  function renderContent() {
+    const content = loadFromStorage(CONTENT_KEY) || [];
+    contentList.innerHTML = '';
+
+    const pendingContent = content.filter(c => c.status === 'pending');
+
+    if (content.length === 0) {
+      noContentMsg.textContent = 'No content in the system.';
+      noContentMsg.style.display = 'block';
+      return;
+    } else if (pendingContent.length === 0) {
+      noContentMsg.textContent = 'No content for moderation.';
+      noContentMsg.style.display = 'block';
+      return;
+    } else {
+      noContentMsg.style.display = 'none';
+    }
+
+    pendingContent.forEach(item => {
+      const li = document.createElement('li');
+      li.className = 'content-item';
+      li.innerHTML = `
+        <div class="content-header">
+          <h3 class="content-title">${item.title}</h3>
+          <span class="content-status status-pending">Pending</span>
+        </div>
+        <div class="content-body">${item.body}</div>
+        <div class="content-actions">
+          <button class="btn approve-btn">Approve</button>
+          <button class="btn block-btn">Reject</button>
+        </div>
+      `;
+      // Approve button
+      li.querySelector('.approve-btn').addEventListener('click', () => {
+        updateContentStatus(item.id, 'approved');
+      });
+      // Reject button
+      li.querySelector('.block-btn').addEventListener('click', () => {
+        updateContentStatus(item.id, 'rejected');
+      });
+      contentList.appendChild(li);
+    });
+  }
+
+  // Update content status
+  function updateContentStatus(contentId, newStatus) {
+    let content = loadFromStorage(CONTENT_KEY);
+    const index = content.findIndex(c => c.id === contentId);
+    if (index !== -1) {
+      content[index].status = newStatus;
+      saveToStorage(CONTENT_KEY, content);
+      renderContent();
+      renderAnalytics();
+    }
+  }
+
+  // Render analytics & reporting
+  function renderAnalytics() {
+    const users = loadFromStorage(USERS_KEY) || [];
+    const content = loadFromStorage(CONTENT_KEY) || [];
+
+    const totalUsers = users.length;
+    const approvedUsers = users.filter(u => u.status === 'approved').length;
+    const blockedUsers = users.filter(u => u.status === 'blocked').length;
+
+    const pendingContentCount = content.filter(c => c.status === 'pending').length;
+
+    const roleCounts = {
+      student: 0,
+      recruiter: 0,
+      admin: 0,
+    };
+    users.forEach(u => {
+      if (roleCounts.hasOwnProperty(u.role)) roleCounts[u.role]++;
+    });
+
+    totalUsersVal.textContent = totalUsers;
+    approvedUsersVal.textContent = approvedUsers;
+    blockedUsersVal.textContent = blockedUsers;
+    pendingContentVal.textContent = pendingContentCount;
+
+    // Bar chart for roles - calculate %
+    function calcPercent(count) {
+      if (totalUsers === 0) return 0;
+      return Math.round((count / totalUsers) * 100);
+    }
+
+    const studentPct = calcPercent(roleCounts.student);
+    const recruiterPct = calcPercent(roleCounts.recruiter);
+    const adminPct = calcPercent(roleCounts.admin);
+
+    barStudents.style.width = studentPct + '%';
+    barStudents.textContent = studentPct + '%';
+
+    barRecruiters.style.width = recruiterPct + '%';
+    barRecruiters.textContent = recruiterPct + '%';
+
+    barAdmins.style.width = adminPct + '%';
+    barAdmins.textContent = adminPct + '%';
+  }
+
+  // Utility: Capitalize first letter
+  function capitalizeFirstLetter(str) {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  // Initialize app
+  function init() {
+    initData();
+    activateSection('users'); // default view
+  }
+  init();
+</script>
+</body>
+</html>

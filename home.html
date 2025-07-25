@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Job & Internship Portal - Your Career Starts Here</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+<style>
+  /* Base Styles & Typography */
+  :root {
+    --primary-color: #2a4365; /* Dark Blue */
+    --secondary-color: #ff6f61; /* Coral */
+    --accent-color: #4CAF50; /* Green for success/features */
+    --text-color: #333;
+    --light-text-color: #555;
+    --background-light: #f8f8f8;
+    --background-dark: #e0e0e0;
+    --border-color: #ddd;
+    --shadow-light: rgba(0,0,0,0.1);
+    --shadow-medium: rgba(0,0,0,0.15);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body, html {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    scroll-behavior: smooth;
+    background-color: var(--background-light);
+    color: var(--text-color);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    color: var(--primary-color);
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+
+  h1 { font-size: 2.8rem; }
+  h2 { font-size: 2.2rem; }
+  h3 { font-size: 1.8rem; }
+  p { margin-bottom: 1rem; }
+
+  a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  a:hover {
+    color: var(--primary-color);
+  }
+
+  /* Utility Classes */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 14px 36px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    user-select: none;
+    text-align: center;
+  }
+
+  .btn-primary {
+    background-color: var(--secondary-color);
+    color: white;
+  }
+  .btn-primary:hover {
+    background-color: #e66056;
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  .btn-secondary:hover {
+    background-color: #1e354d;
+    transform: translateY(-2px);
+  }
+
+  /* Navbar */
+  .main-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: var(--primary-color);
+    padding: 1rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 2px 8px var(--shadow-medium);
+  }
+  .main-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .main-header .logo {
+    color: white;
+    font-weight: 700;
+    font-size: 1.6rem;
+    letter-spacing: 1.2px;
+    user-select: none;
+  }
+  .main-nav ul {
+    list-style: none;
+    margin: 0; padding: 0;
+    display: flex;
+    gap: 1.7rem;
+  }
+  .main-nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  .main-nav ul li a:hover,
+  .main-nav ul li a:focus {
+    background-color: var(--secondary-color);
+    outline: none;
+    color: white;
+  }
+
+  /* Hero Section */
+  .hero-section {
+    background: url('https://via.placeholder.com/1920x1080/2a4365/ffffff?text=Your+Career+Journey+Starts+Here') no-repeat center center fixed; /* Placeholder image */
+    background-size: cover;
+    color: white;
+    text-align: center;
+    padding: 180px 2rem 100px 2rem; /* Increased padding for fixed nav */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    position: relative;
+  }
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.4); /* Overlay for text readability */
+    z-index: 1;
+  }
+  .hero-section > * {
+    position: relative;
+    z-index: 2;
+  }
+  .hero-section h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  }
+  .hero-section p {
+    font-size: 1.4rem;
+    max-width: 800px;
+    margin: 0 auto 2.5rem auto;
+    color: #f0f0f0;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+  }
+  .hero-section .cta-group {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* General Section Styling */
+  section {
+    padding: 80px 0;
+    background-color: white;
+    border-bottom: 1px solid var(--border-color);
+  }
+  section:nth-of-type(even) {
+    background-color: var(--background-light);
+  }
+  section h2 {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    font-size: 2.5rem;
+  }
+
+  /* About Us Section */
+  #about-us .content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    align-items: center;
+    justify-content: center;
+  }
+  #about-us .text-content {
+    flex: 2;
+    min-width: 300px;
+    max-width: 700px;
+  }
+  #about-us .image-content {
+    flex: 1;
+    min-width: 250px;
+    text-align: center;
+  }
+  #about-us img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px var(--shadow-medium);
+  }
+  #about-us ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 1.5rem;
+  }
+  #about-us ul li {
+    margin-bottom: 0.8rem;
+    font-size: 1.05rem;
+    color: var(--light-text-color);
+    position: relative;
+    padding-left: 25px;
+  }
+  #about-us ul li::before {
+    content: '✓'; /* Checkmark icon */
+    color: var(--accent-color);
+    position: absolute;
+    left: 0;
+    font-weight: 700;
+  }
+
+  /* Features Section */
+  #features .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+  #features .feature-item {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px var(--shadow-light);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  #features .feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px var(--shadow-medium);
+  }
+  #features .feature-item h3 {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  #features .feature-item p {
+    color: var(--light-text-color);
+    font-size: 0.95rem;
+  }
+  /* Placeholder for icons */
+  #features .feature-item .icon {
+    font-size: 3rem;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+  }
+
+  /* Call to Action Section */
+  #cta-section {
+    background-color: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 60px 0;
+  }
+  #cta-section h2 {
+    color: white;
+    margin-bottom: 1.5rem;
+  }
+  #cta-section p {
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: 0 auto 2.5rem auto;
+  }
+
+  /* Footer */
+  .main-footer {
+    background-color: #222;
+    color: #f0f0f0;
+    padding: 40px 0;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+  .main-footer .footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  .main-footer .footer-col {
+    flex: 1;
+    min-width: 200px;
+    max-width: 300px;
+    text-align: left;
+  }
+  .main-footer .footer-col h4 {
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+  }
+  .main-footer .footer-col ul {
+    list-style: none;
+    padding: 0;
+  }
+  .main-footer .footer-col ul li {
+    margin-bottom: 0.5rem;
+  }
+  .main-footer .footer-col ul li a {
+    color: #f0f0f0;
+    transition: color 0.3s ease;
+  }
+  .main-footer .footer-col ul li a:hover {
+    color: var(--secondary-color);
+  }
+  .main-footer .social-links a {
+    color: white;
+    font-size: 1.5rem;
+    margin: 0 0.8rem;
+    transition: color 0.3s ease;
+  }
+  .main-footer .social-links a:hover {
+    color: var(--secondary-color);
+  }
+  .main-footer .copyright {
+    margin-top: 2rem;
+    border-top: 1px solid #444;
+    padding-top: 1.5rem;
+    color: #aaa;
+  }
+
+  /* Form Modals */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.6);
+    display: flex; /* Always flex, control visibility with opacity/pointer-events */
+    justify-content: center;
+    align-items: center;
+    z-index: 1100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  .modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  .modal {
+    background: white;
+    border-radius: 14px;
+    padding: 2.5rem 3rem;
+    width: 400px;
+    max-width: 90vw;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+    position: relative;
+    transform: translateY(-20px); /* Initial state for animation */
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+  }
+  .modal-overlay.active .modal {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  .modal h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: var(--primary-color);
+  }
+  .modal form {
+    display: flex;
+    flex-direction: column;
+  }
+  .modal label {
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+    margin-top: 1.2rem;
+    color: var(--light-text-color);
+  }
+  .modal input[type="text"],
+  .modal input[type="email"],
+  .modal input[type="password"] {
+    padding: 12px 15px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+  }
+  .modal input[type="text"]:focus,
+  .modal input[type="email"]:focus,
+  .modal input[type="password"]:focus {
+    border-color: var(--secondary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 111, 97, 0.2);
+  }
+  .modal button.submit-btn {
+    margin-top: 2rem;
+    background-color: var(--secondary-color);
+    color: white;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  .modal button.submit-btn:hover {
+    background-color: #e66056;
+    transform: translateY(-2px);
+  }
+  .modal .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 18px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.3s ease;
+    user-select: none;
+    padding: 5px;
+  }
+  .modal .close-btn:hover {
+    color: var(--secondary-color);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 992px) {
+    .main-header .main-nav ul {
+      gap: 1rem;
+    }
+    .hero-section h1 {
+      font-size: 3rem;
+    }
+    .hero-section p {
+      font-size: 1.2rem;
+    }
+    #about-us .content-wrapper {
+      flex-direction: column;
+      text-align: center;
+    }
+    #about-us .text-content, #about-us .image-content {
+      max-width: 100%;
+    }
+    #about-us ul {
+      text-align: left;
+      margin: 1.5rem auto 0 auto;
+      max-width: 500px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .main-header .logo {
+      font-size: 1.4rem;
+    }
+    .main-header .main-nav ul {
+      gap: 0.8rem;
+    }
+    .main-header .main-nav ul li a {
+      padding: 0.5rem 0.8rem;
+      font-size: 0.9rem;
+    }
+    .hero-section {
+      padding: 150px 1rem 80px 1rem;
+      min-height: 70vh;
+    }
+    .hero-section h1 {
+      font-size: 2.5rem;
+    }
+    .hero-section p {
+      font-size: 1.1rem;
+    }
+    .hero-section .cta-group {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .btn {
+      width: 80%;
+      max-width: 300px;
+      padding: 12px 25px;
+      font-size: 1rem;
+    }
+    section {
+      padding: 60px 0;
+    }
+    section h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+    .main-footer .footer-content {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .main-footer .footer-col {
+      max-width: 90%;
+      text-align: center;
+    }
+    .main-footer .footer-col ul {
+      display: inline-block; /* For centering list items */
+      text-align: left;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .main-header .container {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .main-header .main-nav ul {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .main-header .main-nav ul li a {
+      font-size: 0.85rem;
+      padding: 0.4rem 0.6rem;
+    }
+    .hero-section h1 {
+      font-size: 2rem;
+    }
+    .hero-section p {
+      font-size: 1rem;
+    }
+    .modal {
+      padding: 2rem;
+    }
+    .modal h3 {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="main-header">
+  <div class="container">
+    <div class="logo">Job & Internship Portal</div>
+    <nav class="main-nav" aria-label="Main Navigation">
+      <ul>
+        <li><a href="#home" tabindex="1">Home</a></li>
+        <li><a href="#about-us" tabindex="2">About Us</a></li>
+        <li><a href="#features" tabindex="3">Features</a></li>
+        <li><a href="#" id="login-link" tabindex="4">Login</a></li>
+        <li><a href="#" id="signup-link" tabindex="5">Sign Up</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section id="home" class="hero-section" tabindex="-1" role="region" aria-labelledby="hero-title">
+    <h1 id="hero-title">Your Career Journey Starts Here</h1>
+    <p>Discover thousands of internships and jobs tailored just for you. Start your career journey with ease and confidence.</p>
+    <div class="cta-group">
+      <button class="btn btn-primary" id="hero-signup-btn" tabindex="6">Get Started Today</button>
+      <a href="#features" class="btn btn-secondary" tabindex="7">Explore Features</a>
+    </div>
+  </section>
+
+  <section id="about-us" tabindex="-1" role="region" aria-labelledby="about-title">
+    <div class="container">
+      <h2 id="about-title" class="text-center">About Our Platform</h2>
+      <div class="content-wrapper">
+        <div class="text-content">
+          <p>Job & Internship Portal is dedicated to bridging the gap between talented individuals and leading organizations. Our mission is to simplify your job search and career development with an intuitive, efficient, and comprehensive platform.</p>
+          <p>We understand the challenges of finding the right opportunity, whether you're a student seeking your first internship, a fresh graduate embarking on your career, or a seasoned professional looking for new horizons. That's why we've built a platform designed with your success in mind.</p>
+          <ul>
+            <li>Wide range of opportunities across diverse industries and sectors.</li>
+            <li>User-friendly interface for seamless browsing, application, and tracking.</li>
+            <li>Secure and private registration, ensuring your data is protected.</li>
+            <li>Dedicated support and resources to guide you at every step of your career.</li>
+            <li>Advanced filtering and search options to find your perfect match.</li>
+          </ul>
+        </div>
+        <div class="image-content">
+          <img src="https://via.placeholder.com/400x300/2a4365/ffffff?text=About+Us" alt="Team collaborating on a project">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" tabindex="-1" role="region" aria-labelledby="features-title">
+    <div class="container">
+      <h2 id="features-title" class="text-center">Key Features & Benefits</h2>
+      <div class="feature-grid">
+        <div class="feature-item">
+          <div class="icon">💼</div>
+          <h3>Vast Job Database</h3>
+          <p>Access thousands of up-to-date job and internship listings from top companies worldwide.</p>
+        </div>
+        <div class="feature-item">
+          <div class="icon">🔍</div>
+          <h3>Smart Search & Filters</h3>
+          <p>Quickly find relevant opportunities with advanced search, industry, location, and experience filters.</p>
+        </div>
+        <div class="feature-item">
+          <div class="icon">🚀</div>
+          <h3>Easy Application Process</h3>
+          <p>Apply to jobs directly through our platform with a streamlined and user-friendly application system.</p>
+        </div>
+        <div class="feature-item">
+          <div class="icon">📊</div>
+          <h3>Application Tracking</h3>
+          <p>Monitor the status of your applications and manage your job search effectively from your dashboard.</p>
+        </div>
+        <div class="feature-item">
+          <div class="icon">🔒</div>
+          <h3>Secure & Private</h3>
+          <p>Your personal data and job search activities are kept secure and confidential.</p>
+        </div>
+        <div class="feature-item">
+          <div class="icon">💡</div>
+          <h3>Career Resources</h3>
+          <p>Gain insights from our blog, career guides, and expert tips to boost your professional growth.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="cta-section" role="region" aria-labelledby="cta-title">
+    <div class="container">
+      <h2 id="cta-title">Ready to Take the Next Step?</h2>
+      <p>Join our growing community of job seekers and employers. Your dream career is just a click away!</p>
+      <button class="btn btn-primary" id="cta-signup-btn">Create Your Free Account</button>
+    </div>
+  </section>
+</main>
+
+<footer class="main-footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-col">
+        <h4>About Us</h4>
+        <p>Connecting talent with opportunity. Our platform simplifies your job and internship search, helping you achieve your career goals.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about-us">About Us</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <p>Email: <a href="mailto:info@jobportal.com">info@jobportal.com</a></p>
+        <p>Phone: +1 (123) 456-7890</p>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook"><img src="https://img.icons8.com/ios-filled/24/ffffff/facebook-new.png" alt="Facebook"></a>
+          <a href="#" aria-label="Twitter"><img src="https://img.icons8.com/ios-filled/24/ffffff/twitter.png" alt="Twitter"></a>
+          <a href="#" aria-label="LinkedIn"><img src="https://img.icons8.com/ios-filled/24/ffffff/linkedin.png" alt="LinkedIn"></a>
+        </div>
+      </div>
+    </div>
+    <div class="copyright">
+      &copy; 2023 Job & Internship Portal. All rights reserved.
+    </div>
+  </div>
+</footer>
+
+<!-- Login Modal -->
+<div class="modal-overlay" id="login-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="login-title">
+  <div class="modal" role="document">
+    <button class="close-btn" aria-label="Close login form" id="login-close">&times;</button>
+    <h3 id="login-title">Login to Your Account</h3>
+    <form id="login-form">
+      <label for="login-email">Email Address</label>
+      <input id="login-email" type="email" required autocomplete="username" placeholder="your.email@example.com" />
+      <label for="login-password">Password</label>
+      <input id="login-password" type="password" required autocomplete="current-password" placeholder="Enter your password" />
+      <button type="submit" class="submit-btn">Login</button>
+    </form>
+  </div>
+</div>
+
+<!-- Sign Up Modal -->
+<div class="modal-overlay" id="signup-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="signup-title">
+  <div class="modal" role="document">
+    <button class="close-btn" aria-label="Close sign up form" id="signup-close">&times;</button>
+    <h3 id="signup-title">Create Your Account</h3>
+    <form id="signup-form">
+      <label for="signup-name">Full Name</label>
+      <input id="signup-name" type="text" required autocomplete="name" placeholder="John Doe" />
+      <label for="signup-email">Email Address</label>
+      <input id="signup-email" type="email" required autocomplete="email" placeholder="your.email@example.com" />
+      <label for="signup-password">Password</label>
+      <input id="signup-password" type="password" required minlength="8" autocomplete="new-password" placeholder="Minimum 8 characters" />
+      <button type="submit" class="submit-btn">Create Account</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Modal elements
+  const loginLink = document.getElementById('login-link');
+  const signupLink = document.getElementById('signup-link');
+  const heroSignupBtn = document.getElementById('hero-signup-btn');
+  const ctaSignupBtn = document.getElementById('cta-signup-btn'); // New CTA button
+
+  const loginModal = document.getElementById('login-modal');
+  const signupModal = document.getElementById('signup-modal');
+
+  const loginClose = document.getElementById('login-close');
+  const signupClose = document.getElementById('signup-close');
+
+  let activeModal = null; // To keep track of the currently open modal
+
+  // Function to open a modal
+  function openModal(modal) {
+    if (activeModal) { // Close any currently open modal first
+      closeModal(activeModal);
+    }
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+    const firstFocusableElement = modal.querySelector('input, button:not(.close-btn)');
+    if (firstFocusableElement) {
+      firstFocusableElement.focus();
+    }
+    document.body.style.overflow = 'hidden'; // Prevent background scroll
+    activeModal = modal;
+
+    // Trap focus inside the modal
+    const focusableElements = modal.querySelectorAll('input, button, [href], select, textarea, [tabindex]:not([tabindex="-1"])');
+    const firstFocusable = focusableElements[0];
+    const lastFocusable = focusableElements[focusableElements.length - 1];
+
+    modal.addEventListener('keydown', function(e) {
+      if (e.key === 'Tab') {
+        if (e.shiftKey) { // Shift + Tab
+          if (document.activeElement === firstFocusable) {
+            lastFocusable.focus();
+            e.preventDefault();
+          }
+        } else { // Tab
+          if (document.activeElement === lastFocusable) {
+            firstFocusable.focus();
+            e.preventDefault();
+          }
+        }
+      }
+    });
+  }
+
+  // Function to close a modal
+  function closeModal(modal) {
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = ''; // Restore scroll
+    activeModal = null;
+    // Return focus to the element that opened the modal
+    if (document.activeElement === modal.querySelector('.close-btn')) {
+      // If closed by the close button, try to return focus to the link that opened it
+      if (modal.id === 'login-modal') {
+        loginLink.focus();
+      } else if (modal.id === 'signup-modal') {
+        signupLink.focus(); // Or heroSignupBtn, ctaSignupBtn
+      }
+    }
+  }
+
+  // Event listeners to open modals
+  loginLink.addEventListener('click', e => {
+    e.preventDefault();
+    openModal(loginModal);
+  });
+
+  signupLink.addEventListener('click', e => {
+    e.preventDefault();
+    openModal(signupModal);
+  });
+
+  heroSignupBtn.addEventListener('click', e => {
+    openModal(signupModal);
+  });
+
+  ctaSignupBtn.addEventListener('click', e => { // New CTA button listener
+    openModal(signupModal);
+  });
+
+  // Event listeners to close modals
+  loginClose.addEventListener('click', () => closeModal(loginModal));
+  signupClose.addEventListener('click', () => closeModal(signupModal));
+
+  // Close modal on overlay click
+  [loginModal, signupModal].forEach(modal => {
+    modal.addEventListener('click', e => {
+      if (e.target === modal) { // Only close if the overlay itself is clicked
+        closeModal(modal);
+      }
+    });
+  });
+
+  // Close modal on escape key
+  document.addEventListener('keydown', e => {
+    if ((e.key === 'Escape' || e.key === 'Esc') && activeModal) {
+      closeModal(activeModal);
+    }
+  });
+
+  // Dummy form submit handlers (replace with real logic)
+  document.getElementById('login-form').addEventListener('submit', e => {
+    e.preventDefault();
+    alert('Login attempt successful! (This is a demo)');
+    closeModal(loginModal);
+    // In a real app, you'd send data to a server and handle response
+  });
+
+  document.getElementById('signup-form').addEventListener('submit', e => {
+    e.preventDefault();
+    alert('Account creation successful! (This is a demo)');
+    closeModal(signupModal);
+    // In a real app, you'd send data to a server and handle response
+  });
+
+  // Smooth scrolling for navigation links
+  document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      document.querySelector(this.getAttribute('href')).scrollIntoView({
+        behavior: 'smooth'
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

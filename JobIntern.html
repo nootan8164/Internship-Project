@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Job & Internship Management</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+   background: url('job1.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+  header {
+    background-color: #2a4365;
+    color: white;
+    padding: 1.3rem 2rem;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.7rem;
+    letter-spacing: 1.2px;
+    user-select: none;
+  }
+ main {
+  flex-grow: 1;
+  padding: 1.8rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 12px;
+}
+
+  /* Search & filter panel */
+  .filter-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    align-items: center;
+  }
+  .filter-panel input[type="text"],
+  .filter-panel select {
+    padding: 11px 14px;
+    font-size: 1rem;
+    border-radius: 7px;
+    border: 1px solid #bbb;
+    min-width: 180px;
+    flex-grow: 1;
+    transition: border-color 0.3s;
+  }
+  .filter-panel input[type="text"]:focus,
+  .filter-panel select:focus {
+    border-color: #2a4365;
+    outline: none;
+  }
+  /* Notifications */
+  #notifications {
+    margin-bottom: 1.8rem;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+  }
+  .notification {
+    background-color: #2a4365;
+    color: white;
+    padding: 14px 22px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgb(0 0 0 / 0.15);
+    margin-bottom: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 0.95;
+    user-select: none;
+    transition: opacity 0.3s ease;
+  }
+  .notification:hover {
+    opacity: 1;
+  }
+
+  /* Jobs list */
+  .job-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.3rem;
+  }
+  .job-card {
+    background-color: white;
+    border-radius: 14px;
+    padding: 1.3rem 1.9rem;
+    box-shadow: 0 4px 14px rgb(0 0 0 / 0.1);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .job-info {
+    max-width: 75%;
+  }
+  .job-title {
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin: 0 0 0.3rem 0;
+    color: #2a4365;
+  }
+  .job-company-location {
+    color: #5a6987;
+    font-size: 0.94rem;
+    margin-bottom: 0.5rem;
+    user-select: text;
+  }
+  .job-type {
+    background-color: #2a4365;
+    color: white;
+    padding: 5px 16px;
+    font-weight: 600;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    user-select: none;
+    display: inline-block;
+    margin-top: 4px;
+  }
+  .job-description {
+    color: #444;
+    font-size: 0.95rem;
+    line-height: 1.35;
+    margin-top: 0.6rem;
+    user-select: text;
+  }
+  /* Bookmark button */
+  .bookmark-btn {
+    all: unset;
+    cursor: pointer;
+    font-size: 1.6rem;
+    transition: color 0.3s ease;
+    user-select: none;
+    margin-left: 1rem;
+  }
+  .bookmark-btn.bookmarked {
+    color: #ff6f61;
+  }
+  .bookmark-btn:not(.bookmarked) {
+    color: #bbb;
+  }
+  /* Responsive */
+  @media (max-width: 700px) {
+    .job-info {
+      max-width: 100%;
+      margin-bottom: 11px;
+    }
+    .job-card {
+      justify-content: flex-start;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .bookmark-btn {
+      margin-left: 0;
+      align-self: flex-end;
+      font-size: 1.8rem;
+    }
+  }
+</style>
+</head>
+<body>
+<header>Job & Internship Management</header>
+
+<div id="notifications"></div>
+
+<main>
+  <section aria-label="Search and Filter Jobs">
+    <div class="filter-panel">
+      <input type="text" id="search-input" placeholder="Search by title or company..." aria-label="Search jobs by title or company"/>
+      <select id="location-filter" aria-label="Filter jobs by location">
+        <option value="">All Locations</option>
+      </select>
+      <select id="type-filter" aria-label="Filter jobs by job type">
+        <option value="">All Job Types</option>
+        <option value="Full-time">Full-time</option>
+        <option value="Part-time">Part-time</option>
+        <option value="Internship">Internship</option>
+        <option value="Contract">Contract</option>
+      </select>
+    </div>
+  </section>
+
+  <section aria-label="Job Listings">
+    <div class="job-list" id="job-list">
+      <!-- Job cards inserted here -->
+    </div>
+    <p id="no-results" style="color:#777; margin-top: 1rem; font-style: italic; display:none;">No jobs found matching your criteria.</p>
+  </section>
+</main>
+
+<script>
+  // Sample jobs data
+  const jobsData = [
+    {
+      id: 'job1',
+      title: 'Frontend Developer Intern',
+      company: 'Tech Solutions Ltd.',
+      location: 'Remote',
+      type: 'Internship',
+      description: 'Work on modern web applications using React and CSS.',
+    },
+    {
+      id: 'job2',
+      title: 'Junior Software Engineer',
+      company: 'Innovatech Corp.',
+      location: 'New York, NY',
+      type: 'Full-time',
+      description: 'Develop scalable backend APIs using Node.js and Express.',
+    },
+    {
+      id: 'job3',
+      title: 'Marketing Intern',
+      company: 'Creative Minds Agency',
+      location: 'Los Angeles, CA',
+      type: 'Internship',
+      description: 'Assist marketing team with campaign planning and social media.',
+    },
+    {
+      id: 'job4',
+      title: 'Data Analyst',
+      company: 'Data Insights LLC',
+      location: 'Remote',
+      type: 'Full-time',
+      description: 'Analyze datasets and produce reports to guide business strategy.',
+    },
+    {
+      id: 'job5',
+      title: 'Graphic Designer',
+      company: 'Bright Studios',
+      location: 'San Francisco, CA',
+      type: 'Contract',
+      description: 'Create branding and advertising materials for clients.',
+    },
+  ];
+
+  // LocalStorage keys
+  const BOOKMARKS_KEY = 'jobBookmarks';
+  const NOTIFICATIONS_KEY = 'jobNotifications';
+
+  // Elements
+  const jobListEl = document.getElementById('job-list');
+  const searchInput = document.getElementById('search-input');
+  const locationFilter = document.getElementById('location-filter');
+  const typeFilter = document.getElementById('type-filter');
+  const notificationsContainer = document.getElementById('notifications');
+  const noResultsEl = document.getElementById('no-results');
+
+  // Utility localStorage functions
+  function saveToStorage(key, data) {
+    localStorage.setItem(key, JSON.stringify(data));
+  }
+  function loadFromStorage(key) {
+    const val = localStorage.getItem(key);
+    return val ? JSON.parse(val) : [];
+  }
+
+  // Initialize unique locations list
+  function initLocationsFilter() {
+    const locations = [...new Set(jobsData.map(j => j.location))].sort();
+    locations.forEach(loc => {
+      const option = document.createElement('option');
+      option.value = loc;
+      option.textContent = loc;
+      locationFilter.appendChild(option);
+    });
+  }
+
+  // Render jobs according to filters and search
+  function renderJobs() {
+    const bookmarks = loadFromStorage(BOOKMARKS_KEY);
+    const searchTerm = searchInput.value.trim().toLowerCase();
+    const selectedLocation = locationFilter.value;
+    const selectedType = typeFilter.value;
+
+    let filtered = jobsData.filter(job => {
+      let matchSearch = job.title.toLowerCase().includes(searchTerm) || job.company.toLowerCase().includes(searchTerm);
+      let matchLocation = selectedLocation === '' || job.location === selectedLocation;
+      let matchType = selectedType === '' || job.type === selectedType;
+      return matchSearch && matchLocation && matchType;
+    });
+
+    jobListEl.innerHTML = '';
+
+    if (filtered.length === 0) {
+      noResultsEl.style.display = 'block';
+      return;
+    } else {
+      noResultsEl.style.display = 'none';
+    }
+
+    filtered.forEach(job => {
+      const card = document.createElement('div');
+      card.className = 'job-card';
+      const isBookmarked = bookmarks.includes(job.id);
+      card.innerHTML = `
+        <div class="job-info">
+          <h3 class="job-title">${job.title}</h3>
+          <div class="job-company-location">${job.company} &mdash; ${job.location}</div>
+          <div class="job-type">${job.type}</div>
+          <p class="job-description">${job.description}</p>
+        </div>
+        <button class="bookmark-btn ${isBookmarked ? 'bookmarked' : ''}" title="${isBookmarked ? 'Remove bookmark' : 'Bookmark this job'}" aria-label="${isBookmarked ? 'Remove bookmark' : 'Bookmark this job'}">&#9733;</button>
+      `;
+      const bookmarkBtn = card.querySelector('.bookmark-btn');
+      bookmarkBtn.addEventListener('click', () => toggleBookmark(job.id));
+      jobListEl.appendChild(card);
+    });
+  }
+
+  // Toggle bookmark state
+  function toggleBookmark(jobId) {
+    let bookmarks = loadFromStorage(BOOKMARKS_KEY);
+    const idx = bookmarks.indexOf(jobId);
+    let action = '';
+    if (idx === -1) {
+      bookmarks.push(jobId);
+      action = 'Bookmarked';
+    } else {
+      bookmarks.splice(idx, 1);
+      action = 'Removed bookmark from';
+    }
+    saveToStorage(BOOKMARKS_KEY, bookmarks);
+    renderJobs();
+    showNotification(`${action} job successfully.`);
+  }
+
+  // Show notifications with fade-out on click or timeout
+  function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    notification.tabIndex = 0;
+    notificationsContainer.appendChild(notification);
+
+    // Remove on click
+    notification.addEventListener('click', () => {
+      notification.style.opacity = '0';
+      setTimeout(() => notification.remove(), 400);
+    });
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      notification.style.opacity = '0';
+      setTimeout(() => notification.remove(), 400);
+    }, 5000);
+  }
+
+  // Event Listeners
+  searchInput.addEventListener('input', renderJobs);
+  locationFilter.addEventListener('change', renderJobs);
+  typeFilter.addEventListener('change', renderJobs);
+
+  // Initialize the app UI
+  function init() {
+    initLocationsFilter();
+    renderJobs();
+  }
+
+  init();
+</script>
+</body>
+</html>
